@@ -1,10 +1,12 @@
-import { NextFunction, Request, Response } from "express";
+import { application, NextFunction, Request, Response } from "express";
 import { UploadedFile } from "express-fileupload";
 import { join } from "path";
 import fs from "fs";
 import sharp from "sharp";
 import { WriteImage } from "../utils/FileUtil";
 import { ApplicationError } from "../Types/Errors/ApplicationError";
+import { ValidateForQuery } from "../Validations/RequestValidations";
+import { GetImageSchema } from "../JoiSchemas/GetImageSchema";
 export const PostImage = async (
   req: Request,
   res: Response,
@@ -15,7 +17,7 @@ export const PostImage = async (
     if (result.isSuccessful) {
       res.status(200).json({});
     } else {
-      next(result.Errors[0]);
+      next(new ApplicationError(400, result.Errors[0]));
     }
   } else {
     next(new ApplicationError(400, "No files provided"));
@@ -23,14 +25,14 @@ export const PostImage = async (
 };
 
 export const EditImage = async (req: Request, res: Response) => {
-  const buffer = fs.readFileSync(
-    "./src/Data/1c9de0f7dad9016ead059a35abe686aa.png"
-  );
-  sharp(buffer)
-    .resize(20, 20)
-    .toFile("./src/Data/1c9de0f7dad9016ead059a35abe686aa.png", (err) => {
-      if (err) console.log(err.message);
-    });
+  // const buffer = fs.readFileSync(
+  //   "./src/Data/1c9de0f7dad9016ead059a35abe686aa.png"
+  // );
+  // sharp(buffer)
+  //   .resize(20, 20)
+  //   .toFile("./src/Data/1c9de0f7dad9016ead059a35abe686aa.png", (err) => {
+  //     if (err) console.log(err.message);
+  //   });
   res.status(200).json({});
 };
 

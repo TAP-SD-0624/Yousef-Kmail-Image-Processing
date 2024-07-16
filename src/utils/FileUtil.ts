@@ -6,17 +6,17 @@ export const WriteImage = async (
   file: UploadedFile,
   override: boolean = true
 ): Promise<ErrorOr<string>> => {
+  const value = new ErrorOr<string>();
   try {
     const path = join("./src/Data", file.name);
     await promises.writeFile(path, file.data);
-    const value = new ErrorOr<string>();
-
     value.result = path;
+    return value;
   } catch (e: any) {
     const value = new ErrorOr<string>();
     value.isSuccessful = false;
     value.Errors.push(e.message);
+  } finally {
     return value;
   }
-  return new ErrorOr<string>();
 };
