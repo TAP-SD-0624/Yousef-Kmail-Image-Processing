@@ -2,6 +2,7 @@ import express from "express";
 import ImageRouter from "./src/routes/ImageRoutes";
 import bodyParser from "body-parser";
 import fileUpload from "express-fileupload";
+import { GobalErrorHandling } from "./src/Middlewares/GlobalErrorHandling";
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/api/image", ImageRouter);
 
+app.use(GobalErrorHandling);
 app.listen(3000, () => {
   console.log("listening on port 3000");
 });
