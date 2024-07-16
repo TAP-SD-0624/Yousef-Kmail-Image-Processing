@@ -5,8 +5,6 @@ import fs from "fs";
 import sharp from "sharp";
 import { WriteImage } from "../utils/FileUtil";
 import { ApplicationError } from "../Types/Errors/ApplicationError";
-import { GetImageSchema } from "../JoiSchemas/DownloadImageSchema";
-import Joi from "joi";
 export const PostImage = async (
   req: Request,
   res: Response,
