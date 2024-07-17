@@ -1,12 +1,11 @@
-import { application, NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { UploadedFile } from "express-fileupload";
 import { join } from "path";
 import fs from "fs";
 import sharp from "sharp";
 import { WriteImage } from "../utils/FileUtil";
 import { ApplicationError } from "../Types/Errors/ApplicationError";
-import { ValidateForQuery } from "../Validations/RequestValidations";
-import { GetImageSchema } from "../JoiSchemas/GetImageSchema";
+import { ReqQuery } from "../Types/ImageControllerTypes";
 export const PostImage = async (
   req: Request,
   res: Response,
@@ -25,22 +24,28 @@ export const PostImage = async (
 };
 
 export const EditImage = async (req: Request, res: Response) => {
-  // const buffer = fs.readFileSync(
-  //   "./src/Data/1c9de0f7dad9016ead059a35abe686aa.png"
+  const buffer = fs.readFileSync(
+    "./src/Data/1c9de0f7dad9016ead059a35abe686aa.png"
+  );
+
+  // let waterMark = await fs.promises.readFile(
+  //   join("./src/Data", "Sample-Watermark-Transparent.png")
   // );
-  // sharp(buffer)
-  //   .resize(20, 20)
-  //   .toFile("./src/Data/1c9de0f7dad9016ead059a35abe686aa.png", (err) => {
-  //     if (err) console.log(err.message);
-  //   });
+  // image.composite([
+  //   {
+  //     input: waterMark,
+  //   },
+  // ]);
+
+  sharp(buffer)
+    .resize(20, 20)
+    .toFile("./src/Data/1c9de0f7dad9016ead059a35abe686aa.png", (err) => {
+      if (err) console.log(err.message);
+    });
   res.status(200).json({});
 };
 
-export const DownloadImage = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const DownloadImage = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   const {
@@ -52,7 +57,7 @@ export const DownloadImage = async (
     resizeWidth,
     resizeHeight,
     blur,
-  } = req.query;
+  } = req.query as ReqQuery;
 
   try {
     // Read the image file as a buffer
@@ -66,58 +71,20 @@ export const DownloadImage = async (
     }
 
     // Apply resizing if width and/or height are provided
-    const resizeOptions: { width?: number; height?: number } = {};
-    if (resizeWidth) {
-      resizeOptions.width = parseInt(resizeWidth as string, 10);
-    }
-    if (resizeHeight) {
-      resizeOptions.height = parseInt(resizeHeight as string, 10);
-    }
-
-    if (resizeOptions.width && resizeOptions.height)
-      image.resize(resizeOptions.width, resizeOptions.height, {
+    if (resizeWidth && resizeHeight)
+      image.resize(resizeHeight, resizeHeight, {
         fit: "cover",
       });
 
-    //Apply Cropping
-
-    const cropOptions: {
-      width?: number;
-      height?: number;
-      top?: number;
-      left?: number;
-    } = {};
-
-    if (cropWidth) {
-      cropOptions.width = parseInt(cropWidth as string, 10);
-    }
-    if (cropHeight) {
-      cropOptions.height = parseInt(cropHeight as string, 10);
-    }
-    if (cropLeft) {
-      cropOptions.left = parseInt(cropLeft as string, 10);
-    }
-    if (cropTop) {
-      cropOptions.top = parseInt(cropTop as string, 10);
-    }
-
-    if (cropOptions.width && cropOptions.height)
+    if (cropWidth && cropHeight)
       image.extract({
-        width: cropOptions.width,
-        height: cropOptions.height,
-        left: cropOptions.left ?? 0,
-        top: cropOptions.top ?? 0,
+        width: cropWidth,
+        height: cropHeight,
+        left: cropLeft ?? 0,
+        top: cropTop ?? 0,
       });
-    if (blur) image.blur(parseInt(blur as string));
 
-    let waterMark = await fs.promises.readFile(
-      join("./src/Data", "Sample-Watermark-Transparent.png")
-    );
-    image.composite([
-      {
-        input: waterMark,
-      },
-    ]);
+    if (blur) image.blur(blur);
 
     const processedImageBuffer = await image.toBuffer();
 
