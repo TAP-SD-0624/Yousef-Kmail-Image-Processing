@@ -1,8 +1,8 @@
 import express from "express";
-import ImageRouter from "./src/routes/ImageRoutes";
+import ImageRouter from "./routes/ImageRoutes";
 import bodyParser from "body-parser";
 import fileUpload from "express-fileupload";
-import { GobalErrorHandling } from "./src/Middlewares/GlobalErrorHandling";
+import { GobalErrorHandling } from "./Middlewares/GlobalErrorHandling";
 
 const app = express();
 
@@ -22,3 +22,5 @@ app.use(GobalErrorHandling);
 app.listen(3000, () => {
   console.log("listening on port 3000");
 });
+
+export default app;
