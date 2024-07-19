@@ -1,4 +1,4 @@
-export interface ReqQuery {
+export interface ImageProcessingAttributes {
   grayScale?: number;
   cropWidth?: number;
   cropHeight?: number;

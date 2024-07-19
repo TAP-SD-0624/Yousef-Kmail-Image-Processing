@@ -2,10 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import { ApplicationError } from "../Types/Errors/ApplicationError";
 
 export const GobalErrorHandling = async (
-  error: Error,
+  error: any,
   req: Request,
   res: Response,
-  next: any
+  next: NextFunction
 ) => {
   if (error instanceof ApplicationError) {
     const AppError = error as ApplicationError;
