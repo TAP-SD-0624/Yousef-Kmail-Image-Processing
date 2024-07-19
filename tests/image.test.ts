@@ -1,4 +1,4 @@
-import app from "../src/app";
+import { app, server } from "../src/app";
 import supertest from "supertest";
 
 const request = supertest(app);
@@ -21,4 +21,9 @@ describe("Image APIS", () => {
       expect(response.body.error).not.toBeNull();
     });
   });
+});
+
+afterAll((done) => {
+  server.close();
+  done();
 });

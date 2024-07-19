@@ -19,8 +19,8 @@ app.use("/api/image", ImageRouter);
 
 app.use(GobalErrorHandling);
 
-app.listen(3000, () => {
+const server = app.listen(3000, () => {
   console.log("listening on port 3000");
 });
 
-export default app;
+export { app, server };
